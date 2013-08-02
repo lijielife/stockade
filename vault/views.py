@@ -38,6 +38,41 @@ def project_detail(request, project_id):
 
 
 @login_required
+def secrets_table(request):
+    if request.method != 'POST':
+        return HttpResponse(
+            json.dumps({'error': 'Post at me, bro!'}),
+            content_type='application/json',
+            status=400
+        )
+    project_id = request.POST.get('project_id')
+    if not project_id:
+        return HttpResponse(
+            json.dumps({'error': 'Invalid project.'}),
+            content_type='application/json',
+            status=400
+        )
+    try:
+        project = Project.objects.get(pk=project_id)
+    except Project.DoesNotExist:
+        return HttpResponse(
+            json.dumps({'error': 'Invalid project.'}),
+            content_type='application/json',
+            status=400
+        )
+    if project.owner != request.user:
+        return HttpResponse(
+            json.dumps({'error': "Don't hack me, bro!"}),
+            content_type='application/json',
+            status=401
+        )
+    return render_to_response('vault/secrets_table.html', {'project': project},
+            context_instance=RequestContext(request))
+
+
+
+
+@login_required
 def create_project(request):
     if request.method == 'POST':
         form = ProjectForm(request.POST)

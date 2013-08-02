@@ -20,4 +20,5 @@ urlpatterns = patterns('vault.views',
 	url(r'^project/(?P<project_id>\d+)/$', 'project_detail'),
 	url(r'^projects/new/$', 'create_project'),
     url(r'^api/projects/$', 'project_table'),
+    url(r'^api/secrets/$', 'secrets_table')
 )
