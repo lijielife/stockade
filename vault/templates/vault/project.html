@@ -111,7 +111,6 @@
 {% block page_js %}
 <script>
   $(function() {
-    $('span.dots').tooltip({ 'title' : 'Click to fetch password' });
     $('a.edit').tooltip({ 'title' : 'Edit' });
     $('a.remove').tooltip({ 'title' : 'Remove' });
     $('a.edit-project-tooltip').tooltip({ 'title' : 'Edit or Delete Project' });
@@ -138,7 +137,7 @@
         'password' : $('#password').val()
       };
       $.post('/secret/new/', opts).done(function(msg) {
-        $.post('/api/secrets', {'project_id' : project_id } ).done(function(data) {
+        $.post('/api/secrets/', {'project_id' : project_id } ).done(function(data) {
           $('.secrets-table').html(data);
           }).fail(function(xhr,statusString,error) {
           stockade.display_error("Failed to reload secrets table");
@@ -150,19 +149,6 @@
         stockade.display_error("Failed to create secret");
       });
     });
-    $('span.dots').click(function() {
-
-      var node = $(this).parent();
-      var secret_id = node.attr('data-secret-id');
-      $.post("/api/secrets/",{'secret_id':secret_id}).done(function(msg) {
-        node.html('<input readonly="readonly" type="text" style="cursor:pointer;" value="placeholder">').find('input');
-        input.val(msg);
-        input.select();
-      }).fail(function(xhr,statusString,error) {
-        stockade.display_error("Unable to get secret");
-      });
-      //go do some ajax
-    });
     $('.typeahead').typeahead([{
       name: 'add-members',
       //remote: '../data/films/queries/%QUERY.json',
@@ -172,6 +158,20 @@
     }]);
     $('.typeahead').bind('typeahead:selected', function(e, datum) {
       $('<div class="label"> <span class="glyphicon glyphicon-minus-sign"></span></div>').prepend(document.createTextNode(datum.value)).appendTo('.member-list');
+    });
+    //duplicated in secrets_table, bleh
+    $('span.dots').tooltip({ 'title' : 'Click to fetch password' });
+    $('span.dots').click(function() {
+      var node = $(this).parent();
+      var secret_id = node.attr('data-secret-id');
+      $.post("/secret/",{'secret_id':secret_id}).done(function(msg) {
+        node.html('<input readonly="readonly" type="text" style="cursor:pointer;" value="placeholder">').find('input');
+        input.val(msg);
+        input.select();
+      }).fail(function(xhr,statusString,error) {
+        stockade.display_error("Unable to get secret");
+      });
+      //go do some ajax
     });
   });
 </script>

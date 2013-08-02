@@ -66,7 +66,7 @@
             <li><a href="/">Projects</a></li>
             {% if user.is_authenticated %}
             <li class="dropdown">
-              <a class="dropdown-toggle" data-toggle="dropdown" href="#">{{ user.first_name }} {{ user.last_name }}<b class="caret"></b></a>
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#">{{ user.first_name }} {{ user.last_name }} <span class="glyphicon glyphicon-user"></span><b class="caret"></b></a>
               <ul class="dropdown-menu">
                 <li class="">
                   <a href="/logout">Logout</a>
