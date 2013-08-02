@@ -1,3 +1,5 @@
+{% extends "vault/base.html" %}
+{% block content %}
 <div class="alert alert-danger fade in" data-dismiss="alert">Sample Failure Alert <a class="close" href="#">&times;</a></div>
 <div class="alert alert-success fade in" data-dismiss="alert">Sample Success Alert <a class="close" href="#">&times;</a></div>
 
@@ -90,6 +92,8 @@
     </div>
   </div>
 </div>
+{% endblock %}
+{% block end_js %}
     <script>
       $(function() {
         $('span.dots').tooltip({ 'title' : 'Click to fetch password' });
@@ -119,5 +123,4 @@
         });
       });
     </script>
-  </body>
-</html>
+{% endblock %}
