@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+
+    <title>{{title}}</title>
+    <meta name="application-name" content="Stockade"/>
+    <meta name="msapplication-TileColor" content="#004d18"/>
+    <meta name="msapplication-TileImage" content="apple-touch-icon-144x144.png"/>
+
+
+    <link href="css/bootstrap.min.css" media="screen" rel="stylesheet" type="text/css" />
+    <link href="css/bootstrap-glyphicons.css" media="screen" rel="stylesheet" type="text/css" />
+    <link href="css/typeahead.js-bootstrap.css" media="screen" rel="stylesheet" type="text/css" />
+
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/typeahead.min.js"></script>
+    <script>
+      function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie != '') {
+          var cookies = document.cookie.split(';');
+          for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+              break;
+            }
+          }
+        }
+        return cookieValue;
+      }
+
+      function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+      }
+
+      var csrftoken = getCookie('csrftoken');
+      $.ajaxSetup({
+        crossDomain: false,
+        beforeSend: function(xhr, settings) {
+          if (!csrfSafeMethod(settings.type)) {
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+          }
+        }
+      });
+    </script>
+  </head>
+  <body>
+    <div class="navbar navbar-fixed-top">
+      <div class="container">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+
+        <a class="navbar-brand" href="/">Stockade</a>
+        <div class="nav-collapse collapse navbar-responsive-collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="projects.html">Projects</a></li>
+            <li class="dropdown">
+              <a class="dropdown-toggle" data-toggle="dropdown" href="#">Paul Kehrer <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="/user/info/1">My Projects</a></li>
+                <li><a href="/user/edit">Edit Profile</a></li>
+                <li class="">
+                  <a href="/register/logout">Logout</a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="container" style="padding-top:60px">
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="alert alert-danger fade in" data-dismiss="alert">Sample Failure Alert <a class="close" href="#">&times;</a></div>
+          <div class="alert alert-success fade in" data-dismiss="alert">Sample Success Alert <a class="close" href="#">&times;</a></div>
+          {%block content %}{% endblock %}
+        </div>
+      </div>
+    </div>
+    {% block end_js %}{% endblock %}
+  </body>
+</html>
+
