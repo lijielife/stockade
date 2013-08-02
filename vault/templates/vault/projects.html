@@ -3,23 +3,22 @@
 <div style="padding-bottom:20px">
   <h3 class="pull-left">Projects <a data-toggle="modal" href="#create-project-modal" class="linkify-glyphicon"><span class="glyphicon glyphicon-plus-sign"></span></a></h3>
 </div>
+{% if num_projects == 0 %}
+<h3>You have no projects. Create one!</h3>
+{% else %}
 <table class="table table-striped">
   <tr>
     <th>Project Name</th>
+    <th>Description</th>
   </tr>
+  {% for project in project_list %}
   <tr>
-    <td><a href="project.html">Barbican</a></td>
+    <td><a href="/project/{{project.id}}">{{project.name}}</a></td>
+    <td>{{project.description}}</td>
   </tr>
-  <tr>
-    <td><a href="#these">Stockade</a></td>
-  </tr>
-  <tr>
-    <td><a href="#are">Keep</a></td>
-  </tr>
-  <tr>
-    <td><a href="#fake">Postern</a></td>
-  </tr>
+  {% endfor %}
 </table>
+{% endif %}
 <div class="modal fade" id="create-project-modal">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -48,12 +47,17 @@
 
 {% block page_js %}
 <script>
-  $(document).ready(function() {
+  $(function() {
     $('#create-project').click(function() {
       var project_name = $('#project-name').val();
       var project_desc = $('#project-desc').val();
+      var opts = { 'project_name' : project_name, 'project_desc' : project_desc };
+      $.post('/projects/new', opts).done(function(msg) {
+        console.log('whoop');
+      }).fail(function(xhr,statusString,error) {
+        stockade.display_error("Failed to create project");
+      });
     });
   });
 </script>
 {% endblock %}
-
