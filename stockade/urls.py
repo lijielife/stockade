@@ -16,6 +16,7 @@ urlpatterns = patterns('vault.views',
     url(r'^$', 'projects'),
 	url(r'^login/$', 'login_view'),
     url(r'^logout/$', 'logout_view'),
+    url(r'^search/users/(?P<username>\w+)/$', 'search_users'),
 	url(r'^project/(?P<project_id>\d+)/$', 'project_detail'),
-	url(r'^project/new/$', 'create_project')
+	url(r'^project/new/$', 'create_project'),
 )

@@ -1,4 +1,6 @@
 # Create your views here.
+import json
+
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
@@ -43,7 +45,7 @@ def login_view(request):
             else:
                 # Return a 'disabled account' error message
                 return render_to_response('vault/login.html', {'error': 'Account is disabled'},
-                                          context_instance=RequestContext(request))        
+					  context_instance=RequestContext(request))
         else:
             # Return an 'invalid login' error message.
             return render_to_response('vault/login.html', {'error': 'Invalid login'},
@@ -55,3 +57,7 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return HttpResponseRedirect('/login/')
+
+
+def search_users(request, username):
+    return json.dumps(["Pawl", username])
