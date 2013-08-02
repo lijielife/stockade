@@ -3,7 +3,7 @@ from django.db import models
 
 class Project(models.Model):
     name = models.CharField(max_length=200)
-    owner = models.ForeignKey('User')
+    #owner = models.ForeignKey('User')
     description = models.CharField(max_length=255)
     create_date = models.DateTimeField('date created', auto_now_add=True)
     modified_date = models.DateTimeField('date created', auto_now_add=True)
@@ -27,8 +27,8 @@ class Secret(models.Model):
 
 
 class ProjectMember(models.Model):
-    user = models.ForeignKey('User')
-    project models.ForeignKey(Project)
+    #user = models.ForeignKey('User')
+    project = models.ForeignKey(Project)
     create_date = models.DateTimeField('date created', auto_now_add=True)
     modified_date = models.DateTimeField('date created', auto_now_add=True)
 
