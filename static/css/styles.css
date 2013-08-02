@@ -1,0 +1,5 @@
+/* this is needed when you want to make a glyphicon a link in bs3rc1 */
+a.linkify-glyphicon {
+  display: inline-block;
+  text-decoration:none;
+}
