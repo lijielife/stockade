@@ -14,7 +14,8 @@ urlpatterns = patterns('vault.views',
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
     url(r'^$', 'projects'),
-	url(r'^login/$', 'login'),
+	url(r'^login/$', 'login_view'),
+    url(r'^logout/$', 'logout_view'),
 	url(r'^project/(?P<project_id>\d+)/$', 'project_detail'),
 	url(r'^project/new/$', 'create_project')
 )

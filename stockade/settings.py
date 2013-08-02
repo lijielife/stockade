@@ -8,10 +8,12 @@ TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
+    ('Douglas Mendizabal', 'douglas.mendizabal@rackspace.com'),
 )
 
 MANAGERS = ADMINS
 
+# Database Settings
 # make sure db dir exists
 _db_dir = os.path.join(PROJECT_DIR, 'db')
 if not os.path.exists(_db_dir):
@@ -28,6 +30,9 @@ DATABASES = {
         'PORT': '',                      # Set to empty string for default.
     }
 }
+
+# Auth Settings
+LOGIN_URL = '/login/'
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
