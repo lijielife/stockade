@@ -1,10 +1,12 @@
 {% extends "vault/base.html" %}
 
-{% if error %}
+
 {% block errors %}
+{% if error %}
 <div class="alert fade in" data-dismiss="alert">{{ error }}<a class="close" href="#">&times;</a></div>
-{% endblock %}
 {% endif %}
+{% endblock %}
+
 
 {% block content %}
 <div class="col-lg-4 col-offset-4">
