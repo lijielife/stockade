@@ -1,7 +1,7 @@
 {% extends "vault/base.html" %}
 {% block content %}
 <div>
-  <h3>Barbican
+  <h3>{{ project.name }}
     <a data-toggle="modal" href="#edit-project-modal" class="edit-project-tooltip linkify-glyphicon"><span class="glyphicon glyphicon-edit"></span></a>
     <a data-toggle="modal" href="#create-password-modal" class="create-password-tooltip linkify-glyphicon"><span class="glyphicon glyphicon-plus-sign"></span></a></h3>
 </div>
@@ -15,30 +15,20 @@
     <th>Updated</th>
     <th>Actions</th>
   </tr>
-  <tr>
-    <td>Server</td>
-    <td>api-int-01</td>
-    <td><a href="ssh://127.0.0.1">ssh://127.0.0.1<a/></td>
-    <td>root</td>
-    <td style="width:200px" id="password-123"><span class="dots">••••••••</span></td>
-    <td>Last week by Paul Kehrer</td>
-    <td>
-      <a href="" class="edit linkify-glyphicon"><span class="glyphicon glyphicon-edit"></span></a>&nbsp;&nbsp;
-      <a href="" class="remove linkify-glyphicon"><span class="glyphicon glyphicon-remove"></span></a>
-    </td>
-  </tr>
-  <tr>
-    <td>Server</td>
-    <td>api-int-01</td>
-    <td><a href="">ssh://127.0.0.1<a/></td>
-    <td>root</td>
-    <td style="width:200px" id="password-123"><span class="dots">••••••••</span></td>
-    <td>Last week by Paul Kehrer</td>
-    <td>
-      <a href="" class="edit linkify-glyphicon"><span class="glyphicon glyphicon-edit"></span></a>&nbsp;&nbsp;
-      <a href="" class="remove linkify-glyphicon"><span class="glyphicon glyphicon-remove"></span></a>
-    </td>
-  </tr>
+  {% for secret in project.secret_set.all %}
+    <tr>
+      <td>{{ secret.category }}</td>
+      <td>{{ secret.description }}</td>
+      <td>{{ secret.url }}</td>
+      <td>{{ secret.username }}</td>
+      <td style="width:200px" id="secret-{{ secret.pk }}"><span class="dots">••••••••</span></td>
+      <td>{{ secret.modified_date }} by {{ secret.last_user }}</td>
+      <td>
+        <a href="" class="edit linkify-glyphicon"><span class="glyphicon glyphicon-edit"></span></a>&nbsp;&nbsp;
+        <a href="" class="remove linkify-glyphicon"><span class="glyphicon glyphicon-remove"></span></a>
+      </td>
+    </tr>
+  {% endfor %}
 </table>
 </div>
 <div>
