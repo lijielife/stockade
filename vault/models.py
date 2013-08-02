@@ -17,10 +17,11 @@ class Secret(models.Model):
     project = models.ForeignKey(Project)
     category = models.CharField(max_length=200)
     description = models.CharField(max_length=255)
-    last_user = "TODO:last_user_to_modify_secret"
     url = models.CharField(max_length=255)
     username = models.CharField(max_length=255)
-    secret_ref = 'TODO:barbican_generated_value'
+
+    last_user = "Barbie"
+    secret_ref = 'barbican_generated_value'
     create_date = models.DateTimeField('date created', auto_now_add=True)
     modified_date = models.DateTimeField('date created', auto_now=True)
 

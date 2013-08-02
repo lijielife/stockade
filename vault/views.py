@@ -8,7 +8,9 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 
 from vault.forms import ProjectForm
-from vault.models import Project
+from vault.models import Project, Secret
+
+from barbicanclient import client
 
 
 @login_required
@@ -91,6 +93,45 @@ def create_project(request):
         json.dumps({'error': 'Epic Fail.'}),
         content_type='application/json',
         status=400
+    )
+
+
+@login_required
+def create_secret(request):
+    # TODO Make sure user is part of the project
+    if request.method == 'POST':
+	project_id = request.POST.get('project_id')
+	try:
+	    project = Project.objects.get(pk=project_id)
+	except Project.DoesNotExist:
+	    pass
+	secret = Secret()
+	secret.project = project
+	secret.category = request.POST.get('category')
+	secret.description = request.POST.get('description')
+	secret.username = request.POST.get('username')
+	secret.url = request.POST.get('url')
+
+	password = request.POST.get('password')
+
+	keystone_username = 'demo'
+	auth_token = 'be1526d82e5e496e8a037ade5a3616cd'
+	barbican_endpoint = 'http://api-02-int.cloudkeep.io:9311/v1'
+	conn = client.Connection('keystone.com', keystone_username, 'password', 'demo',
+				 token=auth_token,
+				 endpoint=barbican_endpoint)
+	secret.secret_ref = conn.create_secret('text/plain',
+			    plain_text=password).secret_ref
+	secret.save()
+	return HttpResponse(
+	    json.dumps({'success': 'Great Success!'}),
+	    content_type='application/json',
+	    status=201
+	)
+    return HttpResponse(
+	json.dumps({'error': 'Epic Fail.'}),
+	content_type='application/json',
+	status=400
     )
 
 

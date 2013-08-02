@@ -135,7 +135,7 @@
         'username' : $('#username').val(),
         'password' : $('#password').val()
       };
-      $.post('/secret/new', opts).done(function(msg) {
+      $.post('/secret/new/', opts).done(function(msg) {
         $('#create-secret-modal').modal('hide');
         stockade.display_success("Created secret");
       }).fail(function(xhr,statusString,error) {
