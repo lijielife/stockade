@@ -151,7 +151,7 @@ def fetch_secret(request):
     #              token=auth_token,
     #              endpoint=barbican_endpoint)
     # payload = conn.get_raw_secret_by_id(secret.secret_id, 'text/plain')
-    return HttpResponse(json.dupms({'payload', 'efjw[ghorbinakq345id'}, content_type='application_json'))
+    return HttpResponse(json.dumps({'payload':'efjw[ghorbinakq345id'}), content_type='application_json')
 
 
 def login_view(request):
