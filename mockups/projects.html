@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+
+    <title>Stockade</title>
+    <meta name="application-name" content="Stockade"/>
+    <meta name="msapplication-TileColor" content="#004d18"/>
+    <meta name="msapplication-TileImage" content="apple-touch-icon-144x144.png"/>
+
+
+    <link href="css/bootstrap.min.css" media="screen" rel="stylesheet" type="text/css" />
+    <link href="css/bootstrap-glyphicons.css" media="screen" rel="stylesheet" type="text/css" />
+
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script>
+      function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie != '') {
+          var cookies = document.cookie.split(';');
+          for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+              break;
+            }
+          }
+        }
+        return cookieValue;
+      }
+
+      function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+      }
+
+      var csrftoken = getCookie('csrftoken');
+      $.ajaxSetup({
+        crossDomain: false,
+        beforeSend: function(xhr, settings) {
+          if (!csrfSafeMethod(settings.type)) {
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+          }
+        }
+      });
+    </script>
+  </head>
+  <body>
+    <div class="navbar navbar-fixed-top">
+      <div class="container">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+
+        <a class="navbar-brand" href="/">Stockade</a>
+        <div class="nav-collapse collapse navbar-responsive-collapse">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="projects.html">Projects</a></li>
+            <li class="dropdown">
+              <a class="dropdown-toggle" data-toggle="dropdown" href="#">Paul Kehrer <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="/user/info/1">My Projects</a></li>
+                <li><a href="/user/edit">Edit Profile</a></li>
+                <li class="">
+                  <a href="/register/logout">Logout</a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="container" style="padding-top:60px">
+      <div class="row">
+        <div class="col-lg-12">
+          <div style="padding-bottom:20px">
+            <h3 class="pull-left">Projects <a data-toggle="modal" href="#create-project-modal" style="display:inline-block;text-decoration:none"><span class="glyphicon glyphicon-plus-sign"></span></a></h3>
+          </div>
+          <table class="table table-striped">
+            <tr>
+              <th>Project Name</th>
+            </tr>
+            <tr>
+              <td><a href="project.html">Barbican</a></td>
+            </tr>
+            <tr>
+              <td><a href="#these">Stockade</a></td>
+            </tr>
+            <tr>
+              <td><a href="#are">Keep</a></td>
+            </tr>
+            <tr>
+              <td><a href="#fake">Postern</a></td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="create-project-modal">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">Create Project</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="project-name">Project Name</label>
+              <input type="text" class="form-control" id="project-name" name="project-name" placeholder="Unrelenting Genius">
+            </div>
+            <div class="form-group" style="padding-top:10px">
+              <label for="project-desc">Project Description</label>
+              <input type="text" class="form-control" id="project-desc" name="project-desc" placeholder="Cloud Secure AJAX ReSTful Python Free Range Gluten Free">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary" id="create-project">Create</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+    <script>
+      $(document).ready(function() {
+        $('#create-project').click(function() {
+          var project_name = $('#project-name').val();
+          var project_desc = $('#project-desc').val();
+        });
+      });
+    </script>
+  </body>
+</html>
+
