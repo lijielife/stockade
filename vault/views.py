@@ -134,6 +134,25 @@ def create_secret(request):
 	status=400
     )
 
+@login_required
+def fetch_secret(request):
+    # if request.method != 'POST':
+    #     return HttpResponse(
+    #         json.dumps({'error': 'Post at me, bro!'}),
+    #         content_type='application/json',
+    #         status=400
+    #     )
+    # secret_id = request.POST.get('secret_id')
+    # secret = Secret.objects.filter(pk=secret_id)
+    # keystone_username = 'demo'
+    # auth_token = 'be1526d82e5e496e8a037ade5a3616cd'
+    # barbican_endpoint = 'http://api-02-int.cloudkeep.io:9311/v1'
+    # conn = client.Connection('keystone.com', keystone_username, 'password', 'demo',
+    #              token=auth_token,
+    #              endpoint=barbican_endpoint)
+    # payload = conn.get_raw_secret_by_id(secret.secret_id, 'text/plain')
+    return HttpResponse(json.dupms({'payload', 'efjw[ghorbinakq345id'}, content_type='application_json'))
+
 
 def login_view(request):
     if request.method == 'POST':
