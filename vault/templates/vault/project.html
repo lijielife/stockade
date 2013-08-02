@@ -21,7 +21,7 @@
       <td>{{ secret.description }}</td>
       <td>{{ secret.url }}</td>
       <td>{{ secret.username }}</td>
-      <td style="width:200px" id="secret-{{ secret.pk }}"><span class="dots">••••••••</span></td>
+      <td style="width:200px" class="get-secret" data-secret-id="{{ secret.pk }}"><span class="dots">••••••••</span></td>
       <td>{{ secret.modified_date }} by (placeholder: secret last_user)</td>
       <td>
         <a href="" class="edit linkify-glyphicon"><span class="glyphicon glyphicon-edit"></span></a>&nbsp;&nbsp;
@@ -144,10 +144,17 @@
       });
     });
     $('span.dots').click(function() {
-      var input = $(this).parent().html('<input readonly="readonly" type="text" style="cursor:pointer;" value="placeholder">').find('input');
+
+      var node = $(this).parent();
+      var secret_id = node.attr('data-secret-id');
+      $.post("/api/secrets",{'secret_id':secret_id}).done(function(msg) {
+        node.html('<input readonly="readonly" type="text" style="cursor:pointer;" value="placeholder">').find('input');
+        input.val(msg);
+        input.select();
+      }).fail(function(xhr,statusString,error) {
+        stockade.display_error("Unable to get secret");
+      });
       //go do some ajax
-      input.val('password goes here');
-      input.select();
     });
     $('.typeahead').typeahead([{
       name: 'add-members',

@@ -4,20 +4,23 @@
   <h3 class="pull-left">Projects <a data-toggle="modal" href="#create-project-modal" class="linkify-glyphicon"><span class="glyphicon glyphicon-plus-sign"></span></a></h3>
 </div>
 {% if num_projects == 0 %}
+<div class="clearfix"></div>
 <h3>You have no projects. Create one!</h3>
 {% else %}
-<table class="table table-striped">
-  <tr>
-    <th>Project Name</th>
-    <th>Description</th>
-  </tr>
-  {% for project in project_list %}
-  <tr>
-    <td><a href="/project/{{project.id}}">{{project.name}}</a></td>
-    <td>{{project.description}}</td>
-  </tr>
-  {% endfor %}
-</table>
+<div class="project-table">
+  <table class="table table-striped">
+    <tr>
+      <th>Project Name</th>
+      <th>Description</th>
+    </tr>
+    {% for project in project_list %}
+    <tr>
+      <td><a href="/project/{{project.id}}">{{project.name}}</a></td>
+      <td>{{project.description}}</td>
+    </tr>
+    {% endfor %}
+  </table>
+</div>
 {% endif %}
 <div class="modal fade" id="create-project-modal">
   <div class="modal-dialog">
@@ -53,7 +56,13 @@
       var project_desc = $('#project-desc').val();
       var opts = { 'project_name' : project_name, 'project_desc' : project_desc };
       $.post('/projects/new/', opts).done(function(msg) {
-        console.log('whoop');
+        $.get('/api/projects').done(function(data) {
+          $('.project-table').html(data);
+          }).fail(function(xhr,statusString,error) {
+          stockade.display_error("Failed to reload projects table");
+        });
+        $('#create-project-modal').modal('hide');
+        stockade.display_success("Created project!");
       }).fail(function(xhr,statusString,error) {
         stockade.display_error("Failed to create project");
       });
