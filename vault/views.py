@@ -11,7 +11,8 @@ from vault.models import Project
 @login_required
 def projects(request):
     project_list = Project.objects.order_by('name')
-    context = {'project_list': project_list}
+    num_projects = len(project_list)
+    context = {'project_list': project_list, 'num_projects': num_projects}
     return render_to_response('vault/projects.html', context,
             context_instance=RequestContext(request))
 
