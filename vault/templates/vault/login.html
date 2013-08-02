@@ -1,9 +1,15 @@
 {% extends "vault/base.html" %}
+
+{% if error %}
+{% block errors %}{{ error }}{% endblock %}
+{% endif %}
+
 {% block content %}
 <div class="col-lg-4 col-offset-4">
   <h3 style="color:#888">Sign In</h3>
   <div class="well">
-    <form action="login">
+    <form action="/login/" method="post">
+      {% csrf_token %}
       <div class="form-group">
         <label for="username">Username</label>
         <input type="text" class="form-control" placeholder="Username" name="username" id="username">
