@@ -5,31 +5,32 @@
     <a data-toggle="modal" href="#edit-project-modal" class="edit-project-tooltip linkify-glyphicon"><span class="glyphicon glyphicon-edit"></span></a>
     <a data-toggle="modal" href="#create-secret-modal" class="create-secret-tooltip linkify-glyphicon"><span class="glyphicon glyphicon-plus-sign"></span></a></h3>
 </div>
-<table class="table table-striped">
-  <tr>
-    <th>Category</th>
-    <th>Description</th>
-    <th>URL</th>
-    <th>Username</th>
-    <th>Password</th>
-    <th>Updated</th>
-    <th>Actions</th>
-  </tr>
-  {% for secret in project.secret_set.all %}
+<div class="secrets-table">
+  <table class="table table-striped">
     <tr>
-      <td>{{ secret.category }}</td>
-      <td>{{ secret.description }}</td>
-      <td>{{ secret.url }}</td>
-      <td>{{ secret.username }}</td>
-      <td style="width:200px" class="get-secret" data-secret-id="{{ secret.pk }}"><span class="dots">••••••••</span></td>
-      <td>{{ secret.modified_date }} by (placeholder: secret last_user)</td>
-      <td>
-        <a href="" class="edit linkify-glyphicon"><span class="glyphicon glyphicon-edit"></span></a>&nbsp;&nbsp;
-        <a href="" class="remove linkify-glyphicon"><span class="glyphicon glyphicon-remove"></span></a>
-      </td>
+      <th>Category</th>
+      <th>Description</th>
+      <th>URL</th>
+      <th>Username</th>
+      <th>Password</th>
+      <th>Updated</th>
+      <th>Actions</th>
     </tr>
-  {% endfor %}
-</table>
+    {% for secret in project.secret_set.all %}
+      <tr>
+        <td>{{ secret.category }}</td>
+        <td>{{ secret.description }}</td>
+        <td>{{ secret.url }}</td>
+        <td>{{ secret.username }}</td>
+        <td style="width:200px" class="get-secret" data-secret-id="{{ secret.pk }}"><span class="dots">••••••••</span></td>
+        <td>{{ secret.modified_date }} by (placeholder: secret last_user)</td>
+        <td>
+          <a href="" class="edit linkify-glyphicon"><span class="glyphicon glyphicon-edit"></span></a>&nbsp;&nbsp;
+          <a href="" class="remove linkify-glyphicon"><span class="glyphicon glyphicon-remove"></span></a>
+        </td>
+      </tr>
+    {% endfor %}
+  </table>
 </div>
 <div>
   <h5 class="pull-left">Members</h5>
@@ -127,8 +128,9 @@
       });
     });
     $('#create-secret').click(function() {
+      var project_id = $('#project-id').val();
       var opts = {
-        'project_id' : $('#project-id').val(),
+        'project_id' : project_id,
         'category' : $('#category').val(),
         'description' : $('#description').val(),
         'url' : $('#url').val(),
@@ -136,6 +138,11 @@
         'password' : $('#password').val()
       };
       $.post('/secret/new/', opts).done(function(msg) {
+        $.post('/api/secrets', {'project_id' : project_id } ).done(function(data) {
+          $('.secrets-table').html(data);
+          }).fail(function(xhr,statusString,error) {
+          stockade.display_error("Failed to reload secrets table");
+        });
         $('#create-secret-modal').modal('hide');
         stockade.display_success("Created secret");
       }).fail(function(xhr,statusString,error) {
@@ -147,7 +154,7 @@
 
       var node = $(this).parent();
       var secret_id = node.attr('data-secret-id');
-      $.post("/api/secrets",{'secret_id':secret_id}).done(function(msg) {
+      $.post("/api/secrets/",{'secret_id':secret_id}).done(function(msg) {
         node.html('<input readonly="readonly" type="text" style="cursor:pointer;" value="placeholder">').find('input');
         input.val(msg);
         input.select();
