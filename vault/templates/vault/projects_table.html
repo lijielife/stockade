@@ -1,0 +1,12 @@
+<table class="table table-striped">
+  <tr>
+    <th>Project Name</th>
+    <th>Description</th>
+  </tr>
+  {% for project in project_list %}
+  <tr>
+    <td><a href="/project/{{project.id}}">{{project.name}}</a></td>
+    <td>{{project.description}}</td>
+  </tr>
+  {% endfor %}
+</table>
