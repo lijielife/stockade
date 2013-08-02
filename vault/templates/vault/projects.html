@@ -52,7 +52,7 @@
       var project_name = $('#project-name').val();
       var project_desc = $('#project-desc').val();
       var opts = { 'project_name' : project_name, 'project_desc' : project_desc };
-      $.post('/projects/new', opts).done(function(msg) {
+      $.post('/projects/new/', opts).done(function(msg) {
         console.log('whoop');
       }).fail(function(xhr,statusString,error) {
         stockade.display_error("Failed to create project");
