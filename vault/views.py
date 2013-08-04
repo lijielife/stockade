@@ -1,21 +1,21 @@
 # Create your views here.
 import json
 
+from barbicanclient import client
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 
 from vault.forms import ProjectForm
-from vault.models import Project, Secret
-
-from barbicanclient import client
+from vault.models import Project, Secret, ProjectMember
 
 
 @login_required
 def projects(request):
-    project_list = Project.objects.filter(owner=request.user).order_by('name')
+    project_list = request.user.project_set.all()
     num_projects = len(project_list)
     context = {'project_list': project_list, 'num_projects': num_projects}
     return render_to_response('vault/projects.html', context,
@@ -24,7 +24,7 @@ def projects(request):
 
 @login_required
 def project_table(request):
-    project_list = Project.objects.filter(owner=request.user).order_by('name')
+    project_list = request.user.project_set.all()
     num_projects = len(project_list)
     context = {'project_list': project_list,
                'num_projects': num_projects}
@@ -35,6 +35,8 @@ def project_table(request):
 @login_required
 def project_detail(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
+    if project not in request.user.project_set.all():
+        raise PermissionDenied
     return render_to_response('vault/project.html', {'project': project},
             context_instance=RequestContext(request))
 
@@ -62,7 +64,7 @@ def secrets_table(request):
             content_type='application/json',
             status=400
         )
-    if project.owner != request.user:
+    if project not in request.user.project_set.all():
         return HttpResponse(
             json.dumps({'error': "Don't hack me, bro!"}),
             content_type='application/json',
@@ -70,8 +72,6 @@ def secrets_table(request):
         )
     return render_to_response('vault/secrets_table.html', {'project': project},
             context_instance=RequestContext(request))
-
-
 
 
 @login_required
@@ -82,8 +82,12 @@ def create_project(request):
             project = Project()
             project.name = form.cleaned_data['project_name']
             project.description = form.cleaned_data['project_desc']
-            project.owner = request.user
             project.save()
+            project_member = ProjectMember()
+            project_member.project = project
+            project_member.user = request.user
+            project_member.owner = True
+            project_member.save()
             return HttpResponse(
                 json.dumps({'success': 'Great Success!'}),
                 content_type='application/json',
@@ -100,38 +104,38 @@ def create_project(request):
 def create_secret(request):
     # TODO Make sure user is part of the project
     if request.method == 'POST':
-	project_id = request.POST.get('project_id')
-	try:
-	    project = Project.objects.get(pk=project_id)
-	except Project.DoesNotExist:
-	    pass
-	secret = Secret()
-	secret.project = project
-	secret.category = request.POST.get('category')
-	secret.description = request.POST.get('description')
-	secret.username = request.POST.get('username')
-	secret.url = request.POST.get('url')
+       project_id = request.POST.get('project_id')
+    try:
+        project = Project.objects.get(pk=project_id)
+    except Project.DoesNotExist:
+        pass
+    secret = Secret()
+    secret.project = project
+    secret.category = request.POST.get('category')
+    secret.description = request.POST.get('description')
+    secret.username = request.POST.get('username')
+    secret.url = request.POST.get('url')
 
-	password = request.POST.get('password')
+    password = request.POST.get('password')
 
-	keystone_username = 'demo'
-	auth_token = 'be1526d82e5e496e8a037ade5a3616cd'
-	barbican_endpoint = 'http://api-02-int.cloudkeep.io:9311/v1'
-	conn = client.Connection('keystone.com', keystone_username, 'password', 'demo',
-				 token=auth_token,
-				 endpoint=barbican_endpoint)
-	secret.secret_ref = conn.create_secret('text/plain',
-			    plain_text=password).secret_ref
-	secret.save()
-	return HttpResponse(
-	    json.dumps({'success': 'Great Success!'}),
-	    content_type='application/json',
-	    status=201
-	)
+    keystone_username = 'demo'
+    auth_token = 'be1526d82e5e496e8a037ade5a3616cd'
+    barbican_endpoint = 'http://api-02-int.cloudkeep.io:9311/v1'
+    conn = client.Connection('keystone.com', keystone_username, 'password', 'demo',
+                 token=auth_token,
+                 endpoint=barbican_endpoint)
+    secret.secret_ref = conn.create_secret('text/plain',
+                plain_text=password).secret_ref
+    secret.save()
     return HttpResponse(
-	json.dumps({'error': 'Epic Fail.'}),
-	content_type='application/json',
-	status=400
+        json.dumps({'success': 'Great Success!'}),
+        content_type='application/json',
+        status=201
+    )
+    return HttpResponse(
+    json.dumps({'error': 'Epic Fail.'}),
+    content_type='application/json',
+    status=400
     )
 
 @login_required
@@ -167,7 +171,7 @@ def login_view(request):
             else:
                 # Return a 'disabled account' error message
                 return render_to_response('vault/login.html', {'error': 'Account is disabled'},
-					  context_instance=RequestContext(request))
+                      context_instance=RequestContext(request))
         else:
             # Return an 'invalid login' error message.
             return render_to_response('vault/login.html', {'error': 'Invalid login'},
