@@ -1,7 +1,14 @@
 from django.conf.urls import patterns, include, url
-
+from vault.api import ProjectResource, SecretResource, UserResource, ProjectMemberResource
+from tastypie.api import Api
 from django.contrib import admin
 admin.autodiscover()
+
+v1_api = Api(api_name='v1')
+v1_api.register(ProjectResource())
+v1_api.register(SecretResource())
+v1_api.register(UserResource())
+v1_api.register(ProjectMemberResource())
 
 urlpatterns = patterns('vault.views',
     # Examples:
@@ -22,5 +29,6 @@ urlpatterns = patterns('vault.views',
     url(r'^api/projects/$', 'project_table'),
     url(r'^api/secrets/$', 'secrets_table'),
     url(r'^secret/new/$', 'create_secret'),
-    url(r'^secret/$', 'fetch_secret')
+    url(r'^secret/$', 'fetch_secret'),
+    url(r'^api/', include(v1_api.urls)),
 )
