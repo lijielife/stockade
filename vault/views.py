@@ -136,39 +136,34 @@ def create_secret(request):
     secret.description = request.POST.get('description')
     secret.username = request.POST.get('username')
     secret.url = request.POST.get('url')
+    secret.last_user = request.user
 
     password = request.POST.get('password')
 
-    keystone_username = 'demo'
-    auth_token = 'be1526d82e5e496e8a037ade5a3616cd'
-    barbican_endpoint = 'http://api-02-int.cloudkeep.io:9311/v1'
-    conn = client.Connection('keystone.com', keystone_username, 'password', 'demo',
-                 token=auth_token,
-                 endpoint=barbican_endpoint)
-    secret.secret_ref = conn.create_secret('text/plain',
-                plain_text=password).secret_ref
+    secret.secret_ref = _store_secret_as_plain_text(secret, password)
     secret.save()
+
     return HttpResponse(
         json.dumps({'success': 'Great Success!'}),
         content_type='application/json',
         status=201
     )
-    return HttpResponse(
-    json.dumps({'error': 'Epic Fail.'}),
-    content_type='application/json',
-    status=400
-    )
+
 
 @login_required
 def fetch_secret(request):
-    # if request.method != 'POST':
-    #     return HttpResponse(
-    #         json.dumps({'error': 'Post at me, bro!'}),
-    #         content_type='application/json',
-    #         status=400
-    #     )
-    # secret_id = request.POST.get('secret_id')
-    # secret = Secret.objects.filter(pk=secret_id)
+
+    if request.method != 'POST':
+        return HttpResponse(
+            json.dumps({'error': 'Post at me, bro!'}),
+            content_type='application/json',
+            status=400
+        )
+    secret_id = request.POST.get('secret_id')
+    secrets = Secret.objects.filter(pk=secret_id)
+    print('secret:{0}'.format(secrets[0]))
+    payload = _decrypt_secret_as_plain_text(secrets[0].secret_ref)
+
     # keystone_username = 'demo'
     # auth_token = 'be1526d82e5e496e8a037ade5a3616cd'
     # barbican_endpoint = 'http://api-02-int.cloudkeep.io:9311/v1'
@@ -176,7 +171,8 @@ def fetch_secret(request):
     #              token=auth_token,
     #              endpoint=barbican_endpoint)
     # payload = conn.get_raw_secret_by_id(secret.secret_id, 'text/plain')
-    return HttpResponse(json.dumps({'payload':'efjw[ghorbinakq345id'}), content_type='application_json')
+
+    return HttpResponse(json.dumps({'payload': payload}), content_type='application_json')
 
 
 def login_view(request):
@@ -208,3 +204,35 @@ def logout_view(request):
 
 def search_users(request, username):
     return json.dumps(["Pawl", username])
+
+
+def _store_secret_as_plain_text(secret, password):
+
+    barbican_client = _get_barbican_client()
+    return barbican_client.secrets.store(name=secret.description,
+                                         payload=password,
+                                         payload_content_type='text/plain',
+                                         payload_content_encoding=None,
+                                         algorithm=None,
+                                         bit_length=None,
+                                         mode=None,
+                                         expiration=None)
+
+    # TODO(jwood) Iff Keystone auth is utilized.
+    # keystone_username = 'demo'
+    # auth_token = 'be1526d82e5e496e8a037ade5a3616cd'
+    # barbican_endpoint = 'http://api-02-int.cloudkeep.io:9311/v1'
+    # conn = client.Connection('keystone.com', keystone_username, 'password', 'demo',
+    #              token=auth_token,
+    #              endpoint=barbican_endpoint)
+    # secret.secret_ref = conn.create_secret('text/plain',
+    #             plain_text=password).secret_ref
+
+
+def _decrypt_secret_as_plain_text(secret_ref):
+    barbican_client = _get_barbican_client()
+    return barbican_client.secrets.decrypt(secret_ref)
+
+
+def _get_barbican_client():
+    return client.Client(endpoint='http://162.209.49.35:9311/v1', tenant_id='stockade_tenant')
