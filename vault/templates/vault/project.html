@@ -1,7 +1,7 @@
 {% extends "vault/base.html" %}
 {% block content %}
 <div>
-  <h3>{{ project.name }}
+  <h3 id="project-name-header">{{ project.name }}
     <a data-toggle="modal" href="#edit-project-modal" class="edit-project-tooltip linkify-glyphicon"><span class="glyphicon glyphicon-edit"></span></a>
     <a data-toggle="modal" href="#create-secret-modal" class="create-secret-tooltip linkify-glyphicon"><span class="glyphicon glyphicon-plus-sign"></span></a></h3>
 </div>
@@ -102,7 +102,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-primary" id="create-project">Update</button>
+        <button type="button" class="btn btn-primary" id="edit-project">Update</button>
       </div>
     </div>
   </div>
@@ -118,12 +118,15 @@
     $('#edit-project').click(function() {
       var project_name = $('#project-name').val();
       var project_desc = $('#project-desc').val();
+      var project_id = $('#project-id').val();
       var opts = { 'project_name' : project_name, 'project_desc' : project_desc };
-      $.post('/project/'+parseInt(project_id)+'/update', opts).done(function(msg) {
-        console.log('whoop');
-        stockade.display_success("Updated Project");
+      $.post('/project/'+parseInt(project_id)+'/edit', opts).done(function(msg) {
+        stockade.display_success("Edited Project");
+        $('#edit-project-modal').modal('hide');
+        $('#project-name-header').text(project_name);
       }).fail(function(xhr,statusString,error) {
-        stockade.display_error("Failed to create project");
+        stockade.display_error("Failed to edit project");
+        $('#edit-project-modal').modal('hide');
       });
     });
     $('#create-secret').click(function() {

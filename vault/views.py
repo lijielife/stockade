@@ -42,6 +42,27 @@ def project_detail(request, project_id):
 
 
 @login_required
+def project_edit(request, project_id):
+    if request.method == 'POST':
+        form = ProjectForm(request.POST)
+        if form.is_valid():
+            project = get_object_or_404(Project, pk=project_id)
+            project.name = form.cleaned_data['project_name']
+            project.description = form.cleaned_data['project_desc']
+            project.save()
+            return HttpResponse(
+                json.dumps({'success': 'Great Success!'}),
+                content_type='application/json',
+                status=201
+            )
+    return HttpResponse(
+        json.dumps({'error': 'Epic Fail.'}),
+        content_type='application/json',
+        status=400
+    )
+
+
+@login_required
 def secrets_table(request):
     if request.method != 'POST':
         return HttpResponse(
