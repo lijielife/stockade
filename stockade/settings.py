@@ -1,5 +1,7 @@
 # Django settings for stockade project.
 import os
+import ldap
+from django_auth_ldap.config import LDAPSearch, GroupOfNamesType
 
 PROJECT_DIR = os.path.split(os.path.split(os.path.abspath(__file__))[0])[0]
 
@@ -118,6 +120,22 @@ MIDDLEWARE_CLASSES = (
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
+
+AUTHENTICATION_BACKENDS = (
+    'django_auth_ldap.backend.LDAPBackend',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+# Baseline configuration.
+AUTH_LDAP_SERVER_URI = "ldap://edir.ord1.corp.rackspace.com"
+
+AUTH_LDAP_BIND_DN = "cn=django-agent,dc=example,dc=com"
+AUTH_LDAP_BIND_PASSWORD = "phlebotinum"
+AUTH_LDAP_USER_SEARCH = LDAPSearch("ou=users,dc=example,dc=com",
+    ldap.SCOPE_SUBTREE, "(uid=%(user)s)")
+# or perhaps:
+# AUTH_LDAP_USER_DN_TEMPLATE = "uid=%(user)s,ou=users,dc=example,dc=com"
+
 
 ROOT_URLCONF = 'stockade.urls'
 
