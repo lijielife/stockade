@@ -152,7 +152,6 @@ def create_secret(request):
 
 @login_required
 def fetch_secret(request):
-
     if request.method != 'POST':
         return HttpResponse(
             json.dumps({'error': 'Post at me, bro!'}),
@@ -161,6 +160,13 @@ def fetch_secret(request):
         )
     secret_id = request.POST.get('secret_id')
     secrets = Secret.objects.filter(pk=secret_id)
+    if not secrets or not len(secrets):
+        return HttpResponse(
+            json.dumps({'error': 'Not in this castle'}),
+            content_type='application/json',
+            status=401
+        )
+
     print('secret:{0}'.format(secrets[0]))
     payload = _decrypt_secret_as_plain_text(secrets[0].secret_ref)
 
@@ -173,6 +179,27 @@ def fetch_secret(request):
     # payload = conn.get_raw_secret_by_id(secret.secret_id, 'text/plain')
 
     return HttpResponse(json.dumps({'payload': payload}), content_type='application_json')
+
+
+@login_required
+def delete_secret(request):
+    secret_id = request.POST.get('secret_id')
+    secrets = Secret.objects.filter(pk=secret_id)
+    if not secrets or not len(secrets):
+        return HttpResponse(
+            json.dumps({'error': 'Not in this castle'}),
+            content_type='application/json',
+            status=401
+        )
+
+    print('secret:{0}'.format(secrets[0]))
+    secrets[0].delete()
+
+    return HttpResponse(
+        json.dumps({'success': 'Great Success!'}),
+        content_type='application/json',
+        status=201
+    )
 
 
 def login_view(request):

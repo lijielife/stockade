@@ -25,8 +25,8 @@
         <td style="width:200px" class="get-secret" data-secret-id="{{ secret.pk }}"><span class="dots">••••••••</span></td>
         <td>{{ secret.modified_date }} by (placeholder: secret last_user)</td>
         <td>
-          <a href="" class="edit linkify-glyphicon"><span class="glyphicon glyphicon-edit"></span></a>&nbsp;&nbsp;
-          <a href="" class="remove linkify-glyphicon"><span class="glyphicon glyphicon-remove"></span></a>
+          <a href="" class="edit linkify-glyphicon"><span class="edit-secret glyphicon glyphicon-edit"></span></a>&nbsp;&nbsp;
+          <a href="" class="remove linkify-glyphicon" data-secret-id="{{ secret.pk }}"><span class="remove-secret glyphicon glyphicon-remove"></span></a>
         </td>
       </tr>
     {% endfor %}
@@ -174,6 +174,20 @@
       });
       //go do some ajax
     });
+
+    // Delete secret.
+    // $('a.remove').tooltip({ 'title' : 'Remove a secret' });
+    $('span.remove-secret').click(function() {
+      var node = $(this).parent();
+      var secret_id = node.attr('data-secret-id');
+      $.post("/secret/delete/",{'secret_id':secret_id}).done(function(msg) {
+        stockade.display_success("Removed secret");
+        // node.parent().remove();
+      }).fail(function(xhr,statusString,error) {
+        stockade.display_error("Unable to delete secret");
+      });
+    });
+
   });
 </script>
 {% endblock %}
