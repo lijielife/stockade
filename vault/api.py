@@ -20,10 +20,10 @@ class SecretResource(ModelResource):
 class ProjectMemberResource(ModelResource):
     class Meta:
         queryset = ProjectMember.objects.all()
-        resource_name = 'membership'
+        resource_name = 'memberships'
 
 
 class UserResource(ModelResource):
     class Meta:
         queryset = User.objects.all()
-        resource_name = 'user'
+        resource_name = 'users'
