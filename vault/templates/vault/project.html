@@ -25,7 +25,7 @@
         <td style="width:200px" class="get-secret" data-secret-id="{{ secret.pk }}"><span class="dots">••••••••</span></td>
         <td>{{ secret.modified_date }} by (placeholder: secret last_user)</td>
         <td>
-          <a href="" class="edit linkify-glyphicon"><span class="edit-secret glyphicon glyphicon-edit"></span></a>&nbsp;&nbsp;
+          <a data-toggle="modal" href="#edit-secret-modal" class="edit linkify-glyphicon" data-secret-id="{{ secret.pk }}"><span class="edit-secret glyphicon glyphicon-edit"></span></a>&nbsp;&nbsp;
           <a href="" class="remove linkify-glyphicon" data-secret-id="{{ secret.pk }}"><span class="remove-secret glyphicon glyphicon-remove"></span></a>
         </td>
       </tr>
@@ -78,6 +78,44 @@
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
           <button type="button" class="btn btn-primary" id="create-secret">Create Secret</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="edit-secret-modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Update Secret</h4>
+      </div>
+      <form>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="category">Category</label>
+            <input type="text" class="form-control" placeholder="Server" name="category" id="category-se">
+          </div>
+          <div class="form-group" style="padding-top:15px">
+            <label for="description">Description</label>
+            <input type="text" class="form-control" placeholder="Name it" name="description" id="description-se">
+          </div>
+          <div class="form-group" style="padding-top:15px">
+            <label for="url">URL</label>
+            <input type="text" class="form-control" placeholder="ssh://myplace" name="url" id="url-se">
+          </div>
+          <div class="form-group" style="padding-top:15px">
+            <label for="username">Username</label>
+            <input type="text" class="form-control" placeholder="Username" name="username" id="username-se">
+          </div>
+          <div class="form-group" style="padding-top:15px">
+            <label for="password">Password</label>
+            <input type="text" class="form-control" placeholder="Password1" name="password" id="password-se">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" id="edit-secret-button">Update Secret</button>
         </div>
       </form>
     </div>
@@ -146,6 +184,7 @@
           stockade.display_error("Failed to reload secrets table");
         });
         $('#create-secret-modal').modal('hide');
+        window.location.reload();  // Cheatin'!
         stockade.display_success("Created secret");
       }).fail(function(xhr,statusString,error) {
         $('#create-secret-modal').modal('hide');
@@ -187,6 +226,39 @@
         stockade.display_error("Unable to delete secret");
       });
     });
+
+    // Delete secret.
+    // $('a.remove').tooltip({ 'title' : 'Remove a secret' });
+    $('span.edit-secret').click(function() {
+      var node = $(this).parent();
+      var secret_id = node.attr('data-secret-id');
+      $(this).html('<input type="hidden"  name="edit-secret-id" id="edit-secret-modal-id" value="' + parseInt(secret_id) + '">');
+    });
+
+    // Edit Secret.
+    $('#edit-secret-button').click(function() {
+      var project_id = $('#project-id').val();
+      var secret_id = $('#edit-secret-modal-id').val();
+      $('#edit-secret-modal-id').remove();
+      var opts = {
+        'project_id' : project_id,
+        'secret_id' : secret_id,
+        'category' : $('#category-se').val(),
+        'description' : $('#description-se').val(),
+        'url' : $('#url-se').val(),
+        'username' : $('#username-se').val(),
+        'password' : $('#password-se').val()
+      };
+      $.post('/secret/'+parseInt(secret_id)+'/edit', opts).done(function(msg) {
+        $('#edit-secret-modal').modal('hide');
+        window.location.reload();  // Cheatin'!
+        stockade.display_success("Updated secret");
+      }).fail(function(xhr,statusString,error) {
+        $('#edit-secret-modal').modal('hide');
+        stockade.display_error("Failed to update secret");
+      });
+    });
+
 
   });
 </script>
