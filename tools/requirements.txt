@@ -1,4 +1,6 @@
 django
+python-ldap
+django-auth-ldap
 python-barbicanclient
 django-tastypie
 mimeparse
