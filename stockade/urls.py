@@ -31,6 +31,8 @@ urlpatterns = patterns(
     url(r'^api/projects/$', 'project_table'),
     url(r'^api/secrets/$', 'secrets_table'),
     url(r'^secret/new/$', 'create_secret'),
+    url(r'^secret/delete/$', 'delete_secret'),
+    url(r'^secret/(?P<secret_id>\d+)/edit$', 'secret_edit'),
     url(r'^secret/$', 'fetch_secret'),
     url(r'^api/', include(v1_api.urls)),
 )

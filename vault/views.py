@@ -152,7 +152,6 @@ def create_secret(request):
 
 @login_required
 def fetch_secret(request):
-
     if request.method != 'POST':
         return HttpResponse(
             json.dumps({'error': 'Post at me, bro!'}),
@@ -161,7 +160,13 @@ def fetch_secret(request):
         )
     secret_id = request.POST.get('secret_id')
     secrets = Secret.objects.filter(pk=secret_id)
-    print('secret:{0}'.format(secrets[0]))
+    if not secrets or not len(secrets):
+        return HttpResponse(
+            json.dumps({'error': 'Not in this castle'}),
+            content_type='application/json',
+            status=401
+        )
+
     payload = _decrypt_secret_as_plain_text(secrets[0].secret_ref)
 
     # keystone_username = 'demo'
@@ -173,6 +178,70 @@ def fetch_secret(request):
     # payload = conn.get_raw_secret_by_id(secret.secret_id, 'text/plain')
 
     return HttpResponse(json.dumps({'payload': payload}), content_type='application_json')
+
+
+@login_required
+def secret_edit(request, secret_id):
+    if request.method == 'POST':
+
+        secrets = Secret.objects.filter(pk=secret_id)
+        if not secrets or not len(secrets):
+            return HttpResponse(
+                json.dumps({'error': 'Not in this castle'}),
+                content_type='application/json',
+                status=401
+            )
+        secret_db = secrets[0]
+
+        secret = Secret()
+        secret.id = secret_db.id
+        secret.secret_ref = secret_db.secret_ref
+        secret.create_date = secret_db.create_date
+        secret.project = secret_db.project
+        secret.category = request.POST.get('category') or secret_db.category
+        secret.description = request.POST.get('description') or secret_db.description
+        secret.username = request.POST.get('username') or secret_db.username
+        secret.url = request.POST.get('url') or secret_db.url
+        secret.last_user = request.user
+
+        # If the password changed, then need to create a new secret in Barbican.
+        passwordCurrent = _decrypt_secret_as_plain_text(secret_db.secret_ref)
+        passwordNew = request.POST.get('password')
+        if passwordNew and passwordCurrent != passwordNew:
+            secret.secret_ref = _store_secret_as_plain_text(secret, passwordNew)
+
+        secret.save()
+        return HttpResponse(
+            json.dumps({'success': 'Great Success!'}),
+            content_type='application/json',
+            status=201
+        )
+
+    return HttpResponse(
+        json.dumps({'error': 'Epic Fail.'}),
+        content_type='application/json',
+        status=400
+    )
+
+
+@login_required
+def delete_secret(request):
+    secret_id = request.POST.get('secret_id')
+    secrets = Secret.objects.filter(pk=secret_id)
+    if not secrets or not len(secrets):
+        return HttpResponse(
+            json.dumps({'error': 'Not in this castle'}),
+            content_type='application/json',
+            status=401
+        )
+
+    secrets[0].delete()
+
+    return HttpResponse(
+        json.dumps({'success': 'Great Success!'}),
+        content_type='application/json',
+        status=201
+    )
 
 
 def login_view(request):
