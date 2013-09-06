@@ -1,2 +1,4 @@
 django
 python-barbicanclient
+django-tastypie
+mimeparse
