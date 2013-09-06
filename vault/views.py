@@ -214,4 +214,4 @@ def _decrypt_secret_as_plain_text(secret_ref):
 
 
 def _get_barbican_client():
-    return client.Client(endpoint='http://localhost:9311/v1', tenant_id='stockade_tenant')
+    return client.Client(endpoint='http://162.209.49.35:9311/v1', tenant_id='stockade_tenant')
