@@ -47,8 +47,12 @@ def project_edit(request, project_id):
         form = ProjectForm(request.POST)
         if form.is_valid():
             project = get_object_or_404(Project, pk=project_id)
-            project.name = form.cleaned_data['project_name']
-            project.description = form.cleaned_data['project_desc']
+            name = form.cleaned_data['project_name']
+            if name:
+                project.name = name
+            description = form.cleaned_data['project_desc']
+            if description:
+                project.description = description
             project.save()
             return HttpResponse(
                 json.dumps({'success': 'Great Success!'}),
@@ -129,7 +133,11 @@ def create_secret(request):
     try:
         project = Project.objects.get(pk=project_id)
     except Project.DoesNotExist:
-        pass
+        return HttpResponse(
+            json.dumps({'error': 'Invalid project.'}),
+            content_type='application/json',
+            status=400
+        )
     secret = Secret()
     secret.project = project
     secret.category = request.POST.get('category')
@@ -276,7 +284,6 @@ def search_users(request, username):
 
 
 def _store_secret_as_plain_text(secret, password):
-
     barbican_client = _get_barbican_client()
     return barbican_client.secrets.store(name=secret.description,
                                          payload=password,
