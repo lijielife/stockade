@@ -191,3 +191,9 @@ LOGGING = {
     }
 }
 TASTYPIE_DEFAULT_FORMATS = ['json']
+
+# Barbican settings
+BARBICAN = {
+    'endpoint': 'http://localhost:9311/v1',
+    'tenant_id': 'stockade_tenant'
+}
