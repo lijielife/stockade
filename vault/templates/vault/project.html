@@ -160,9 +160,13 @@
       var project_id = $('#project-id').val();
       var opts = { 'project_name' : project_name, 'project_desc' : project_desc };
       $.post('/project/'+parseInt(project_id)+'/edit', opts).done(function(msg) {
-        stockade.display_success("Edited Project");
+        if (project_name != "" || project_desc != ""){
+          stockade.display_success("Edited Project");
+        }
         $('#edit-project-modal').modal('hide');
-        $('#project-name-header').text(project_name);
+        if (project_name != ""){
+          $('#project-name-header').text(project_name);
+        }
       }).fail(function(xhr,statusString,error) {
         stockade.display_error("Failed to edit project");
         $('#edit-project-modal').modal('hide');
