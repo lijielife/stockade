@@ -18,3 +18,12 @@ To run cd to the stockade directory and then:
 * pip install -r tools/requirements.txt
 * python manage.py syncdb
 * python manage.py runserver
+
+
+**Note** - If you have problems installing the requirements, you might need to install the ldap2 and sasl2 headers.
+
+On Ubuntu:
+
+```
+sudo apt-get install libldap2-dev libsasl2-dev
+```
