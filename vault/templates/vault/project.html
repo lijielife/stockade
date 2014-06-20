@@ -53,7 +53,7 @@
         <h4 class="modal-title">Create Secret</h4>
       </div>
       <form>
-        <input type="hidden"  name="project-id" id="project-id" value="{{project.pk}}">
+        <input type="hidden"  name="project-uuid" id="project-uuid" value="{{project.uuid}}">
         <div class="modal-body">
           <div class="form-group">
             <label for="category">Category</label>
@@ -157,9 +157,9 @@
     $('#edit-project').click(function() {
       var project_name = $('#project-name').val();
       var project_desc = $('#project-desc').val();
-      var project_id = $('#project-id').val();
+      var project_uuid = $('#project-uuid').val();
       var opts = { 'project_name' : project_name, 'project_desc' : project_desc };
-      $.post('/project/'+parseInt(project_id)+'/edit', opts).done(function(msg) {
+      $.post('/project/' + project_uuid + '/edit', opts).done(function(msg) {
         if (project_name != "" || project_desc != ""){
           stockade.display_success("Edited Project");
         }
@@ -173,9 +173,9 @@
       });
     });
     $('#create-secret').click(function() {
-      var project_id = $('#project-id').val();
+      var project_uuid = $('#project-uuid').val();
       var opts = {
-        'project_id' : project_id,
+        'project_uuid' : project_uuid,
         'category' : $('#category').val(),
         'description' : $('#description').val(),
         'url' : $('#url').val(),
@@ -193,7 +193,7 @@
         return;
       }
       $.post('/secret/new/', opts).done(function(msg) {
-        $.post('/api/secrets/', {'project_id' : project_id } ).done(function(data) {
+        $.post('/api/secrets/', {'project_uuid' : project_uuid } ).done(function(data) {
           $('.secrets-table').html(data);
           }).fail(function(xhr,statusString,error) {
           stockade.display_error("Failed to reload secrets table");
@@ -252,11 +252,11 @@
 
     // Edit Secret.
     $('#edit-secret-button').click(function() {
-      var project_id = $('#project-id').val();
+      var project_uuid = $('#project-uuid').val();
       var secret_id = $('#edit-secret-modal-id').val();
       $('#edit-secret-modal-id').remove();
       var opts = {
-        'project_id' : project_id,
+        'project_uuid' : project_uuid,
         'secret_id' : secret_id,
         'category' : $('#category-se').val(),
         'description' : $('#description-se').val(),
