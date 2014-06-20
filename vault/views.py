@@ -282,12 +282,16 @@ def delete_secret(request):
             status=404
         )
 
+    # remove from barbican
+    _delete_secret(secrets[0])
+
+    # remove from local DB
     secrets[0].delete()
 
     return HttpResponse(
         json.dumps({'success': 'Great Success!'}),
         content_type='application/json',
-        status=201
+        status=200
     )
 
 
@@ -320,6 +324,11 @@ def logout_view(request):
 
 def search_users(request, username):
     return json.dumps(["Pawl", username])
+
+
+def _delete_secret(secret):
+    barbican_client = _get_barbican_client()
+    return barbican_client.secrets.delete(secret.secret_ref)
 
 
 def _store_secret_as_plain_text(secret, password):
