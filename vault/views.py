@@ -202,6 +202,13 @@ def secret_edit(request, secret_id):
             )
         secret_db = secrets[0]
 
+        if request.user not in secret_db.project.members.all():
+            return HttpResponse(
+                json.dumps({'error': 'Not found'}),
+                content_type='application/json',
+                status=404
+            )
+
         secret = Secret()
         secret.id = secret_db.id
         secret.secret_ref = secret_db.secret_ref
