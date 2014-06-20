@@ -1,6 +1,12 @@
 var stockade = {
   build_notification: function(type) {
-    return $('<div class="alert fade in" data-dismiss="alert"> <a class="close" href="#">&times;</a></div>').addClass('alert-'+type);
+    var x = $('<div class="alert" data-dismiss="alert"></div>').addClass('alert-'+type);
+
+    window.setTimeout(function() {
+      x.fadeOut(1000);
+    }, 5000);
+
+    return x.fadeIn(1000);
   },
 
   display_error: function(msg) {
