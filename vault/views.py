@@ -139,15 +139,25 @@ def create_secret(request):
             content_type='application/json',
             status=400
         )
+
+    description = request.POST.get('description')
+    password = request.POST.get('password')
+
+    if description == '' or password == '':
+        return HttpResponse(
+            json.dumps({'error': 'Invalid description or password.'}),
+            content_type='application/json',
+            status=400
+        )
+
     secret = Secret()
     secret.project = project
     secret.category = request.POST.get('category')
-    secret.description = request.POST.get('description')
+    secret.description = description
     secret.username = request.POST.get('username')
     secret.url = request.POST.get('url')
     secret.last_user = request.user
 
-    password = request.POST.get('password')
 
     secret.secret_ref = _store_secret_as_plain_text(secret, password)
     secret.save()
@@ -202,20 +212,28 @@ def secret_edit(request, secret_id):
             )
         secret_db = secrets[0]
 
+        description = request.POST.get('description')
+        passwordNew = request.POST.get('password')
+        if description == '' or passwordNew == '':
+            return HttpResponse(
+                json.dumps({'error': 'Invalid description or password.'}),
+                content_type='application/json',
+                status=400
+            )
+
         secret = Secret()
         secret.id = secret_db.id
         secret.secret_ref = secret_db.secret_ref
         secret.create_date = secret_db.create_date
         secret.project = secret_db.project
         secret.category = request.POST.get('category') or secret_db.category
-        secret.description = request.POST.get('description') or secret_db.description
+        secret.description = description or secret_db.description
         secret.username = request.POST.get('username') or secret_db.username
         secret.url = request.POST.get('url') or secret_db.url
         secret.last_user = request.user
 
         # If the password changed, then need to create a new secret in Barbican.
         passwordCurrent = _decrypt_secret_as_plain_text(secret_db.secret_ref)
-        passwordNew = request.POST.get('password')
         if passwordNew and passwordCurrent != passwordNew:
             secret.secret_ref = _store_secret_as_plain_text(secret, passwordNew)
 
