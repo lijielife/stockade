@@ -125,6 +125,25 @@ def create_project(request):
         status=400
     )
 
+@login_required
+def delete_project(request):
+    project_id = request.POST.get('project_id')
+    project = Secret.objects.filter(pk=project_id)
+    if not project or not len(project):
+        return HttpResponse(
+            json.dumps({'error': 'Not in this castle'}),
+            content_type='application/json',
+            status=401
+        )
+
+    project[0].delete()
+
+    return HttpResponse(
+        json.dumps({'success': 'Great Success!'}),
+        content_type='application/json',
+        status=201
+    )
+
 
 @login_required
 def create_secret(request):

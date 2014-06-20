@@ -263,6 +263,17 @@
         stockade.display_error("Failed to update secret");
       });
     });
+      //remove project
+    $('#remove-project').click(function() {
+      var node = $(this).parent();
+      var secret_id = node.attr('data-project-id');
+      $.post("/project/delete/",{'secret_id':project_id}).done(function(msg) {
+        stockade.display_success("Removed secret");
+        // node.parent().remove();
+      }).fail(function(xhr,statusString,error) {
+        stockade.display_error("Unable to delete project");
+      });
+    });
 
 
   });
