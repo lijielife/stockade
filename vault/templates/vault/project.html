@@ -60,7 +60,7 @@
             <input type="text" class="form-control" placeholder="Server" name="category" id="category">
           </div>
           <div class="form-group" style="padding-top:15px">
-            <label for="description">Description</label>
+              <label for="description">Description <font color="red">(required)</font></label>
             <input type="text" class="form-control" placeholder="Name it" name="description" id="description">
           </div>
           <div class="form-group" style="padding-top:15px">
@@ -72,7 +72,7 @@
             <input type="text" class="form-control" placeholder="Username" name="username" id="username">
           </div>
           <div class="form-group" style="padding-top:15px">
-            <label for="password">Password</label>
+              <label for="password">Password <font color="red">(required)</font></label>
             <input type="text" class="form-control" placeholder="Password1" name="password" id="password">
           </div>
         </div>
@@ -182,6 +182,16 @@
         'username' : $('#username').val(),
         'password' : $('#password').val()
       };
+      // fail if description or password are invalid
+      if (!(opts.description)) {
+        stockade.append_error("Description is required",
+                              $("#create-secret-modal").find(".modal-header"));
+        return;
+      } else if (!(opts.password)) {
+        stockade.append_error("Password is required",
+                              $("#create-secret-modal").find(".modal-header"));
+        return;
+      }
       $.post('/secret/new/', opts).done(function(msg) {
         $.post('/api/secrets/', {'project_id' : project_id } ).done(function(data) {
           $('.secrets-table').html(data);
