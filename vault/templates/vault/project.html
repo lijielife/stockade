@@ -184,10 +184,12 @@
       };
       // fail if description or password are invalid
       if (!(opts.description)) {
-        stockade.display_error("Failed to create secret: description field is required");
+        stockade.append_error("Description is required",
+                              $("#create-secret-modal").find(".modal-header"));
         return;
       } else if (!(opts.password)) {
-        stockade.display_error("Failed to create secret: password field is required");
+        stockade.append_error("Password is required",
+                              $("#create-secret-modal").find(".modal-header"));
         return;
       }
       $.post('/secret/new/', opts).done(function(msg) {
