@@ -34,8 +34,8 @@ def project_table(request):
 
 
 @login_required
-def project_detail(request, project_id):
-    project = get_object_or_404(Project, pk=project_id)
+def project_detail(request, project_uuid):
+    project = get_object_or_404(Project, uuid=project_uuid)
     if project not in request.user.project_set.all():
         raise PermissionDenied
     return render_to_response('vault/project.html', {'project': project},
@@ -43,11 +43,11 @@ def project_detail(request, project_id):
 
 
 @login_required
-def project_edit(request, project_id):
+def project_edit(request, project_uuid):
     if request.method == 'POST':
         form = ProjectForm(request.POST)
         if form.is_valid():
-            project = get_object_or_404(Project, pk=project_id)
+            project = get_object_or_404(Project, uuid=project_uuid)
             name = form.cleaned_data['project_name']
             if name:
                 project.name = name
@@ -343,5 +343,5 @@ def _decrypt_secret_as_plain_text(secret_ref):
 
 
 def _get_barbican_client():
-    return client.Client(endpoint=settings.BARBICAN['endpoint'], 
+    return client.Client(endpoint=settings.BARBICAN['endpoint'],
                          tenant_id=settings.BARBICAN['tenant_id'])
