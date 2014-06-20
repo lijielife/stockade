@@ -182,6 +182,14 @@
         'username' : $('#username').val(),
         'password' : $('#password').val()
       };
+      // fail if description or password are invalid
+      if (!(opts.description)) {
+        stockade.display_error("Failed to create secret: description field is required");
+        return;
+      } else if (!(opts.password)) {
+        stockade.display_error("Failed to create secret: password field is required");
+        return;
+      }
       $.post('/secret/new/', opts).done(function(msg) {
         $.post('/api/secrets/', {'project_id' : project_id } ).done(function(data) {
           $('.secrets-table').html(data);
