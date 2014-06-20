@@ -185,6 +185,12 @@ def fetch_secret(request):
             content_type='application/json',
             status=401
         )
+    if request.user not in secrets[0].project.members.all():
+        return HttpResponse(
+            json.dumps({'error': 'Not found'}),
+            content_type='application/json',
+            status=404
+        )
 
     payload = _decrypt_secret_as_plain_text(secrets[0].secret_ref)
 
