@@ -218,6 +218,13 @@ def secret_edit(request, secret_id):
             )
         secret_db = secrets[0]
 
+        if request.user not in secret_db.project.members.all():
+            return HttpResponse(
+                json.dumps({'error': 'Not found'}),
+                content_type='application/json',
+                status=404
+            )
+
         description = request.POST.get('description')
         passwordNew = request.POST.get('password')
         if description == '' or passwordNew == '':
