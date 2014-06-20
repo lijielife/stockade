@@ -12,11 +12,16 @@
     <tr>
       <th>Project Name</th>
       <th>Description</th>
+      <th>Actions</th>
     </tr>
     {% for project in project_list %}
     <tr>
       <td><a href="/project/{{project.id}}">{{project.name}}</a></td>
       <td>{{project.description}}</td>
+      <td>
+          <a data-toggle="modal" href="/project/{{project.id}}" class="edit linkify-glyphicon"><span class="edit-secret glyphicon glyphicon-edit"></span></a>&nbsp;&nbsp;
+          <a href="" class="remove linkify-glyphicon" project-id="{{ project.id }}"><span class="remove-project glyphicon glyphicon-remove"></span></a>
+      </td>
     </tr>
     {% endfor %}
   </table>
@@ -68,5 +73,21 @@
       });
     });
   });
+
+
+  //Delete project
+  $('#delete-project').click(function() {
+    var node = $(this).parent();
+    var project_id = $('#project-id').val();
+    $.post("/project/delete/",{'project_id':project_id}).done(function(msg) {
+      stockade.display_success("Removed project");
+      // node.parent().remove();
+    }).fail(function(xhr,statusString,error) {
+    stockade.display_error("Unable to delete project");
+    });
+  });
+
+
+
 </script>
 {% endblock %}

@@ -141,6 +141,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-default" id="delete-project">Delete</button>
         <button type="button" class="btn btn-primary" id="edit-project">Update</button>
       </div>
     </div>
@@ -263,13 +264,13 @@
         stockade.display_error("Failed to update secret");
       });
     });
-      //remove project
-    $('#remove-project').click(function() {
+      //Delete project
+    $('#delete-project').click(function() {
       var node = $(this).parent();
-      var secret_id = node.attr('data-project-id');
-      $.post("/project/delete/",{'secret_id':project_id}).done(function(msg) {
-        stockade.display_success("Removed secret");
-        // node.parent().remove();
+      var project_id = $('#project-id').val();
+      $.post("/project/delete/",{'project_id':project_id}).done(function(msg) {
+        stockade.display_success("Removed project");
+        location.href='/'
       }).fail(function(xhr,statusString,error) {
         stockade.display_error("Unable to delete project");
       });

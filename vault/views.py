@@ -128,15 +128,16 @@ def create_project(request):
 @login_required
 def delete_project(request):
     project_id = request.POST.get('project_id')
-    project = Secret.objects.filter(pk=project_id)
-    if not project or not len(project):
+    try:
+        project = Project.objects.get(pk=project_id)
+    except Project.DoesNotExist:
         return HttpResponse(
-            json.dumps({'error': 'Not in this castle'}),
+            json.dumps({'error': 'Invalid project.'}),
             content_type='application/json',
-            status=401
+            status=400
         )
 
-    project[0].delete()
+    project.delete()
 
     return HttpResponse(
         json.dumps({'success': 'Great Success!'}),
