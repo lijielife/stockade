@@ -244,6 +244,13 @@ def delete_secret(request):
             status=401
         )
 
+    if request.user not in secrets[0].project.members.all():
+        return HttpResponse(
+            json.dumps({'error': 'Not found'}),
+            content_type='application/json',
+            status=404
+        )
+
     secrets[0].delete()
 
     return HttpResponse(
