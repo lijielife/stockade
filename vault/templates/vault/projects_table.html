@@ -5,7 +5,7 @@
   </tr>
   {% for project in project_list %}
   <tr>
-    <td><a href="/project/{{project.id}}">{{project.name}}</a></td>
+    <td><a href="/project/{{project.uuid}}">{{project.name}}</a></td>
     <td>{{project.description}}</td>
   </tr>
   {% endfor %}
