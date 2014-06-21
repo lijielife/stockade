@@ -5,7 +5,7 @@ from uuid import uuid4
 
 class Project(models.Model):
     name = models.CharField(max_length=255)
-    uuid = models.CharField(max_length=255, default=uuid4())
+    uuid = models.CharField(max_length=255)
     description = models.CharField(max_length=255)
     create_date = models.DateTimeField('date created', auto_now_add=True)
     modified_date = models.DateTimeField('date created', auto_now=True)
