@@ -150,9 +150,9 @@ def delete_project(request):
 def create_secret(request):
     # TODO Make sure user is part of the project
     if request.method == 'POST':
-       project_id = request.POST.get('project_id')
+        project_uuid = request.POST.get('project_uuid')
     try:
-        project = Project.objects.get(pk=project_id)
+        project = Project.objects.get(uuid=project_uuid)
     except Project.DoesNotExist:
         return HttpResponse(
             json.dumps({'error': 'Invalid project.'}),
