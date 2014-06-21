@@ -125,6 +125,26 @@ def create_project(request):
         status=400
     )
 
+@login_required
+def delete_project(request):
+    project_id = request.POST.get('project_id')
+    try:
+        project = Project.objects.get(pk=project_id)
+    except Project.DoesNotExist:
+        return HttpResponse(
+            json.dumps({'error': 'Invalid project.'}),
+            content_type='application/json',
+            status=400
+        )
+
+    project.delete()
+
+    return HttpResponse(
+        json.dumps({'success': 'Great Success!'}),
+        content_type='application/json',
+        status=201
+    )
+
 
 @login_required
 def create_secret(request):

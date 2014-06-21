@@ -28,6 +28,7 @@ urlpatterns = patterns(
     url(r'^project/(?P<project_uuid>.*)/$', 'project_detail'),
     url(r'^project/(?P<project_uuid>.*)/edit$', 'project_edit'),
     url(r'^projects/new/$', 'create_project'),
+    url(r'^project/delete/$', 'delete_project'),
     url(r'^api/projects/$', 'project_table'),
     url(r'^api/secrets/$', 'secrets_table'),
     url(r'^secret/new/$', 'create_secret'),
