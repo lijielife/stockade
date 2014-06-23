@@ -1,5 +1,6 @@
 # Create your views here.
 import json
+from uuid import uuid4
 
 from barbicanclient import client
 from django.conf import settings
@@ -106,6 +107,7 @@ def create_project(request):
         form = ProjectForm(request.POST)
         if form.is_valid():
             project = Project()
+            project.uuid = unicode(uuid4())
             project.name = form.cleaned_data['project_name']
             project.description = form.cleaned_data['project_desc']
             project.save()
